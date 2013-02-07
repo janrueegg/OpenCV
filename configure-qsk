@@ -22,12 +22,12 @@ if [ "$QCONF_OVERRIDE" != "" ]; then
   rm /tmp/owbqsk$$.mk
 fi
 
-if [ "$STAGE_DIR" == "" ]; then
-  STAGE_DIR="$HOME/stage/nto"
-  echo Staging directory could not be determined. Using: $STAGE_DIR
-else
-  echo Using staging directory: $STAGE_DIR
-fi
+#if [ "$STAGE_DIR" == "" ]; then
+#  STAGE_DIR="$HOME/stage/nto"
+#  echo Staging directory could not be determined. Using: $STAGE_DIR
+#else
+#  echo Using staging directory: $STAGE_DIR
+#fi
 
 if [ ! -z "$USE_ICECC" ] ; then
     CC_COMMAND=icecc
@@ -46,22 +46,16 @@ else
     PROFILER_FLAGS=""
 fi
 
-STAGE_LIB="$STAGE_DIR/$CPUDIR/lib"
-STAGE_USR_LIB="$STAGE_DIR/$CPUDIR/usr/lib"
-STAGE_INC="$STAGE_DIR/usr/include"
-TARGET_LIB="$QNX_TARGET/lib"
-TARGET_USR_LIB="$QNX_TARGET/usr/lib"
+#STAGE_LIB="$STAGE_DIR/$CPUDIR/lib"
+#STAGE_USR_LIB="$STAGE_DIR/$CPUDIR/usr/lib"
+#STAGE_INC="$STAGE_DIR/usr/include"
+TARGET_LIB="$QNX_TARGET/$CPUDIR/lib"
+TARGET_USR_LIB="$QNX_TARGET/$CPUDIR/usr/lib"
 TARGET_INC="$QNX_TARGET/usr/include"
 
 COMP_PATHS=" \
-    -Wl,-rpath-link,$STAGE_LIB \
-    -Wl,-rpath-link,$STAGE_USR_LIB \
-    -L$STAGE_LIB \
-    -L$STAGE_USR_LIB \
     -L$TARGET_LIB \
     -L$TARGET_USR_LIB \
-    -I$STAGE_INC \
-    -I$STAGE_INC/freetype2 \
     -I$TARGET_INC"
 
 if [ "$CCWRAP" ] ; then
@@ -88,21 +82,69 @@ cmake \
     -DCMAKE_SYSTEM_NAME="QNX" \
     -DCMAKE_SYSTEM_VERSION="1" \
     -DCMAKE_BUILD_TYPE="$BUILDTYPE" \
+    -DCMAKE_INSTALL_PREFIX="./opencv-$1-stage" \
     -DCMAKE_C_COMPILER="$CC_COMMAND" \
     -DCMAKE_CXX_COMPILER="$CC_COMMAND" \
     -DCMAKE_C_FLAGS="-Vgcc_nto$CPU -fpic -g $COMP_PATHS $PROFILER_FLAGS" \
     -DCMAKE_CXX_FLAGS="-Vgcc_nto${CPU} -Y_gpp -fpic -g -lang-c++ $COMP_PATHS $PROFILER_FLAGS" \
-    -DCMAKE_INCLUDE_PATH="$STAGE_INC;$STAGE_INC/skia" \
-    -DCMAKE_LIBRARY_PATH="$STAGE_LIB;$STAGE_USR_LIB" \
-    -DCMAKE_INSTALL_PREFIX="$STAGE_DIR" \
-    -DCMAKE_OPENCV_GCC_VERSION="42" \
-    -DCMAKE_OPENCV_GCC_VERSION_NUM="402" \
+    -DCMAKE_OPENCV_GCC_VERSION="46" \
+    -DCMAKE_OPENCV_GCC_VERSION_NUM="406" \
     -DCMAKE_AR="$QNX_HOST/usr/bin/nto$BUSUFFIX-ar" \
     -DCMAKE_RANLIB="$QNX_HOST/usr/bin/nto$BUSUFFIX-ranlib" \
     -DCMAKE_LD="$QNX_HOST/usr/bin/nto$BUSUFFIX-ld" \
     -DCMAKE_LINKER="$QNX_HOST/usr/bin/nto$BUSUFFIX-ld" \
+    -DCMAKE_NM="$QNX_HOST/usr/bin/nto$BUSUFFIX-nm" \
+    -DCMAKE_OBJCOPY="$QNX_HOST/usr/bin/nto$BUSUFFIX-objcopy" \
+    -DCMAKE_OBJDUMP="$QNX_HOST/usr/bin/nto$BUSUFFIX-objdump" \
+    -DCMAKE_STRIP="$QNX_HOST/usr/bin/nto$BUSUFFIX-strip" \
+    -DCMAKE_="$QNX_HOST/usr/bin/nto$BUSUFFIX-" \
+    -DCMAKE_="$QNX_HOST/usr/bin/nto$BUSUFFIX-" \
     -DECLIPSE_CDT4_GENERATE_SOURCE_PROJECT=TRUE \
     -DQNX=1 \
+    -DBUILD_DOCS="0" \
+    -DBUILD_EXAMPLES="0" \
+    -DBUILD_JASPER="0" \
+    -DBUILD_JPEG="0" \
+    -DBUILD_PACKAGE="0" \
+    -DBUILD_PERF_TESTS="0" \
+    -DBUILD_PNG="0" \
+    -DBUILD_SHARED_LIBS="1" \
+    -DBUILD_TESTS="0" \
+    -DBUILD_TIFF="0" \
+    -DBUILD_WITH_DEBUG_INFO="1" \
+    -DBUILD_ZLIB="0" \
+    -DBUILD_opencv_python="0" \
+    -DWITH_1394="0" \
+    -DWITH_CUBLAS="0" \
+    -DWITH_CUDA="0" \
+    -DWITH_CUFFT="0" \
+    -DWITH_EIGEN="0" \
+    -DWITH_FFMPEG="0" \
+    -DWITH_GSTREAMER="0" \
+    -DWITH_GTK="0" \
+    -DWITH_JASPER="0" \
+    -DWITH_JPEG="1" \
+    -DWITH_OPENEXR="0" \
+    -DWITH_OPENGL="0" \
+    -DWITH_OPNENI="0" \
+    -DWITH_PNG="1" \
+    -DWITH_PVAPI="0" \
+    -DWITH_QT="0" \
+    -DWITH_TBB="0" \
+    -DWITH_TIFF="0" \
+    -DWITH_UNICAP="0" \
+    -DWITH_V4L="0" \
+    -DWITH_XINE="0" \
+    -DZLIB_INCLUDE_DIR="$TARGET_INC" \
+    -DZLIB_LIBRARIES="$TARGET_USR_LIB/libz.so.2" \
+    -DZLIB_LIBRARY="$TARGET_USR_LIB/libz.so.2" \
+    -DJPEG_INCLUDE_DIR="$TARGET_INC" \
+    -DJPEG_LIBRARIES="$TARGET_LIB/libjpeg.so.4" \
+    -DJPEG_LIBRARY="$TARGET_LIB/libjpeg.so.4" \
+    -DPNG_INCLUDE_DIR="$TARGET_INC" \
+    -DPNG_PNG_INCLUDE_DIR="$TARGET_INC" \
+    -DPNG_LIBRARIES="$TARGET_USR_LIB/libpng14.so.0" \
+    -DPNG_LIBRARY="$TARGET_USR_LIB/libpng14.so.0" \
     -G"Eclipse CDT4 - Unix Makefiles" \
     $CMAKE_EXTRA_OPTIONS \
     $3 ../
