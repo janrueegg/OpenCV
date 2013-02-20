@@ -4,14 +4,20 @@ CPU="$1$2"
 if [ "$2" == "v7le" ]; then
   CPUDIR="$1le-v7"
   BUSUFFIX="$1v7"
+  ENDIANSUFFIX="le"
+  QCCFLAGS="-fstack-protector-strong -mcpu=cortex-a9 -mfloat-abi=softfp -mfpu=neon"
 elif [ "$2" == "a9" ]; then
   CPUDIR="$1le-v7"
   CPU="$1v7le"
   BUSUFFIX="$1v7"
   CPUGEN="a9"
+  ENDIANSUFFIX="le"
+  QCCFLAGS="-fstack-protector-strong -mcpu=cortex-a9 -mfloat-abi=softfp -mfpu=neon"
 else
   CPUDIR="$CPU"
   BUSUFFIX="$1"
+  ENDIANSUFFIX=""
+  QCCFLAGS="-fstack-protector-strong"
 fi
 
 if [ "$QCONF_OVERRIDE" != "" ]; then
@@ -85,8 +91,8 @@ cmake \
     -DCMAKE_INSTALL_PREFIX="./opencv-$1-stage" \
     -DCMAKE_C_COMPILER="$CC_COMMAND" \
     -DCMAKE_CXX_COMPILER="$CC_COMMAND" \
-    -DCMAKE_C_FLAGS="-Vgcc_nto$CPU -fpic -g $COMP_PATHS $PROFILER_FLAGS" \
-    -DCMAKE_CXX_FLAGS="-Vgcc_nto${CPU} -Y_gpp -fpic -g -lang-c++ $COMP_PATHS $PROFILER_FLAGS" \
+    -DCMAKE_C_FLAGS="-Vgcc_nto$CPU -fpic -g $COMP_PATHS $PROFILER_FLAGS $QCCFLAGS" \
+    -DCMAKE_CXX_FLAGS="-Vgcc_nto${CPU} -Y_cpp -fpic -g -lang-c++ $COMP_PATHS $PROFILER_FLAGS $QCCFLAGS" \
     -DCMAKE_OPENCV_GCC_VERSION="46" \
     -DCMAKE_OPENCV_GCC_VERSION_NUM="406" \
     -DCMAKE_AR="$QNX_HOST/usr/bin/nto$BUSUFFIX-ar" \
@@ -114,6 +120,7 @@ cmake \
     -DBUILD_WITH_DEBUG_INFO="1" \
     -DBUILD_ZLIB="0" \
     -DBUILD_opencv_python="0" \
+    -DBUILD_opencv_ts="0" \
     -DWITH_1394="0" \
     -DWITH_CUBLAS="0" \
     -DWITH_CUDA="0" \

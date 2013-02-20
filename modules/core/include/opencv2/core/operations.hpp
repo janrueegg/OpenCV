@@ -61,6 +61,9 @@
     #if !defined WIN32 && (defined __i486__ || defined __i586__ || \
         defined __i686__ || defined __MMX__ || defined __SSE__  || defined __ppc__)
       #define CV_XADD __sync_fetch_and_add
+    #elif defined(__QNX__)
+      //#include <atomic.h>
+      #define CV_XADD __sync_fetch_and_add
     #else
       #include <ext/atomicity.h>
       #define CV_XADD __gnu_cxx::__exchange_and_add

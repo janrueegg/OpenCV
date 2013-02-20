@@ -70,7 +70,7 @@ class Logger
         }
     }
 
-    int _log(int level, const char* fmt, va_list arglist)
+    int _log(int level, const char* fmt, std::va_list arglist)
     {
         if (level > logLevel ) return -1;
         int ret = vfprintf(stream, fmt, arglist);
@@ -98,7 +98,7 @@ public:
      */
     static int log(int level, const char* fmt, ...)
     {
-        va_list arglist;
+        std::va_list arglist;
         va_start(arglist, fmt);
         int ret = instance()._log(level,fmt,arglist);
         va_end(arglist);
@@ -108,7 +108,7 @@ public:
 #define LOG_METHOD(NAME,LEVEL) \
     static int NAME(const char* fmt, ...) \
     { \
-        va_list ap; \
+        std::va_list ap; \
         va_start(ap, fmt); \
         int ret = instance()._log(LEVEL, fmt, ap); \
         va_end(ap); \

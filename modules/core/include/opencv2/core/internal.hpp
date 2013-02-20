@@ -741,8 +741,8 @@ public:
     virtual void genBuffers(int n, unsigned int* buffers) const = 0;        
     virtual void deleteBuffers(int n, const unsigned int* buffers) const = 0;
 
-    virtual void bufferData(unsigned int target, ptrdiff_t size, const void* data, unsigned int usage) const = 0;
-    virtual void bufferSubData(unsigned int target, ptrdiff_t offset, ptrdiff_t size, const void* data) const = 0;
+    virtual void bufferData(unsigned int target, std::ptrdiff_t size, const void* data, unsigned int usage) const = 0;
+    virtual void bufferSubData(unsigned int target, std::ptrdiff_t offset, std::ptrdiff_t size, const void* data) const = 0;
 
     virtual void bindBuffer(unsigned int target, unsigned int buffer) const = 0;
 
